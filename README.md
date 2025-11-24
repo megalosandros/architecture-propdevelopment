@@ -15,7 +15,7 @@
 
 ## Задание 4. Защита доступа к кластеру Kubernetes
 
-В **Task4** — заполненная [таблица](Task4/kubernetes_rbac_roles.md) со списком ролей и три файла скриптов. 
+В **Task4** — заполненная [таблица](Task4/kubernetes_rbac_roles.md) со списком ролей и три файла скриптов для [создания пользователей](Task4/create_users.yaml), [создания ролей](Task4/create_roles.yaml), [связи ролей с пользователями](Task4/create_role_bindings.yaml). 
 
 ## Задание 5. Управление трафиком внутри кластера Kubertnetes
 
