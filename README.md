@@ -19,5 +19,33 @@
 
 ## Задание 5. Управление трафиком внутри кластера Kubertnetes
 
-В [Task5](Task5) — файл с настройкой сетевых политик в кластере Kubernetes.
+В **Task5** — файлы с [созданием](Task5/create_services.yaml) четырех сервисов и [настройкой](Task5/non-admin-api-allow.yaml) сетевых политик в кластере Kubernetes.
+
+### Алгоритм проверки сетевых политик через Minikube
+
+1. Запустить Minikube с поддержкой NetworkPolicy
+   ```sh
+   minikube start --driver=docker --network-plugin=cni --cni=calico
+   ```
+
+2. Применить манифесты
+   ```sh
+   kubectl apply -f create_services.yaml
+   kubectl apply -f non-admin-api-allow.yaml
+   ```
+
+3. Запустить временный Pod с нужной меткой (например, front-end)
+   ```sh
+   kubectl run test-$RANDOM --rm -i -t --image=alpine --labels="app-role=front-end" -- sh
+   ```
+
+4. Установить wget внутри пода
+   ```sh
+   apk add --no-cache wget
+   ```
+
+5. Проверить доступ к разрешенному и запрещенному сервисам
+
+
+    
 

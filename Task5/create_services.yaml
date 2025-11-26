@@ -1,0 +1,119 @@
+# В кластере, внутри одного namespace, вам необходимо развернуть четыре сервиса. 
+# В качестве самого сервиса используйте образ Nginx (вам не нужно создавать логику приложения в этом заданий).
+# Назначьте метки для сервисов
+
+# 1. Front-end
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: front-end-app
+  labels:
+    app-role: front-end
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-end-app
+  labels:
+    app-role: front-end
+spec:
+  selector:
+    app-role: front-end
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+
+# 2. Back-end API
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: back-end-api-app
+  labels:
+    app-role: back-end-api
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-end-api-app
+  labels:
+    app-role: back-end-api
+spec:
+  selector:
+    app-role: back-end-api
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+
+# 3. Admin Front-end
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-front-end-app
+  labels:
+    app-role: admin-front-end
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-front-end-app
+  labels:
+    app-role: admin-front-end
+spec:
+  selector:
+    app-role: admin-front-end
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+
+# 4. Admin Back-end API
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-back-end-api-app
+  labels:
+    app-role: admin-back-end-api
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-back-end-api-app
+  labels:
+    app-role: admin-back-end-api
+spec:
+  selector:
+    app-role: admin-back-end-api
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
