@@ -1,2 +1,53 @@
 # architecture-propdevelopment
 Яндекс-Практикум Архитектура Спринт 5
+
+## Задание 1. Разработка проверочного листа по безопасности данных
+
+В директории **Task1** лежит [mindmap](Task1/mindmap.png), созданный в draw.io. Он отражает типы данных, которые использует компания, классы этих данных и соответствующие им риски.
+
+## Задание 2. Разработка и заполнение проверочного листа для бизнес-систем
+
+В директории **Task2** лежит [проверочный лист](Task2/security_checklist.md) для бизнес-систем компании.
+
+## Задание 3. Внешние интеграции
+
+В директории **Task3** лежит [диаграмма контекста](Task3/smarthome_c4_context_diagram.png), обновлённая [диаграмма контейнеров](Task3/propdevelopment_c4_model_updated.png) и [список требований для внешних интеграций](Task3/smarthome_integration_requirements.md).
+
+## Задание 4. Защита доступа к кластеру Kubernetes
+
+В **Task4** — заполненная [таблица](Task4/kubernetes_rbac_roles.md) со списком ролей и три файла скриптов для [создания пользователей](Task4/create_users.yaml), [создания ролей](Task4/create_roles.yaml), [связи ролей с пользователями](Task4/create_role_bindings.yaml). 
+
+## Задание 5. Управление трафиком внутри кластера Kubertnetes
+
+В **Task5** — файлы с [созданием](Task5/create_services.yaml) четырех сервисов и [настройкой](Task5/non-admin-api-allow.yaml) сетевых политик в кластере Kubernetes.
+
+### Алгоритм проверки сетевых политик через Minikube
+
+1. Запустить Minikube с поддержкой NetworkPolicy
+   ```sh
+   minikube start --driver=docker --network-plugin=cni --cni=calico
+   ```
+
+2. Применить манифесты
+   ```sh
+   kubectl apply -f create_services.yaml
+   kubectl apply -f non-admin-api-allow.yaml
+   ```
+
+3. Запустить временный Pod с нужной меткой (например, front-end)
+   ```sh
+   kubectl run test-$RANDOM --rm -i -t --image=alpine --labels="app-role=front-end" -- sh
+   ```
+
+4. Установить wget внутри пода
+   ```sh
+   apk add --no-cache wget
+   ```
+
+5. Проверить доступ к разрешенному и запрещенному сервисам
+
+   ![Проверка доступа](Task5/check-policy.png)
+
+
+    
+

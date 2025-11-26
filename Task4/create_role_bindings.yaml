@@ -1,0 +1,181 @@
+# ==========================================
+# Platform Admin — полный доступ ко всему кластеру
+# ==========================================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: platform-admin-binding
+  labels:
+    app: propdevelopment
+    component: rbac
+  annotations:
+    description: "Полный административный доступ для Platform/SRE команды."
+subjects:
+- kind: ServiceAccount
+  name: platform-admin-sa
+  namespace: propdevelopment
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin-custom
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ==========================================
+# Security Admin — просмотр секретов в namespace propdevelopment
+# ==========================================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secrets-reader-propdevelopment
+  namespace: propdevelopment
+  labels:
+    app: propdevelopment
+    component: rbac
+  annotations:
+    description: "Доступ к секретам в namespace propdevelopment для специалиста по ИБ."
+subjects:
+- kind: ServiceAccount
+  name: security-admin-sa
+  namespace: propdevelopment
+roleRef:
+  kind: ClusterRole
+  name: secrets-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Namespace: finance
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: finance
+  labels:
+    app: propdevelopment
+    environment: production
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secrets-reader-finance
+  namespace: finance
+  labels:
+    app: propdevelopment
+    component: rbac
+  annotations:
+    description: "Доступ к секретам в namespace finance для специалиста по ИБ."
+subjects:
+- kind: ServiceAccount
+  name: security-admin-sa
+  namespace: propdevelopment
+roleRef:
+  kind: ClusterRole
+  name: secrets-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Namespace: security
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: security
+  labels:
+    app: propdevelopment
+    component: security
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: secrets-reader-security
+  namespace: security
+  labels:
+    app: propdevelopment
+    component: rbac
+  annotations:
+    description: "Доступ к секретам в namespace security для специалиста по ИБ."
+subjects:
+- kind: ServiceAccount
+  name: security-admin-sa
+  namespace: propdevelopment
+roleRef:
+  kind: ClusterRole
+  name: secrets-reader
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Namespace: sales
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sales
+  labels:
+    app: propdevelopment
+    domain: sales
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-sales
+  namespace: sales
+  labels:
+    app: propdevelopment
+    component: rbac
+  annotations:
+    description: "Полный доступ для DevOps/разработчиков в namespace sales (витрина, CRM, онлайн-сделки)."
+subjects:
+- kind: ServiceAccount
+  name: devops-developer-sa
+  namespace: propdevelopment
+roleRef:
+  kind: ClusterRole
+  name: namespace-developer
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Namespace: tenant-services
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant-services
+  labels:
+    app: propdevelopment
+    domain: tenant
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-tenant
+  namespace: tenant-services
+  labels:
+    app: propdevelopment
+    component: rbac
+  annotations:
+    description: "Полный доступ для DevOps/разработчиков в namespace tenant-services (мобильное приложение, ЖКХ)."
+subjects:
+- kind: ServiceAccount
+  name: devops-developer-sa
+  namespace: propdevelopment
+roleRef:
+  kind: ClusterRole
+  name: namespace-developer
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ==========================================
+# Business Reader — просмотр всего кластера (без секретов)
+# ==========================================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: business-reader-binding
+  labels:
+    app: propdevelopment
+    component: rbac
+  annotations:
+    description: "Режим только для чтения для бизнес-аналитиков и менеджеров. Без доступа к секретам."
+subjects:
+- kind: ServiceAccount
+  name: business-reader-sa
+  namespace: propdevelopment
+roleRef:
+  kind: ClusterRole
+  name: cluster-reader
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,96 @@
+# ===============================
+# ClusterRole: cluster-reader
+# Просмотр основных ресурсов кластера (без секретов и RBAC)
+# ===============================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-reader
+  labels:
+    app: propdevelopment
+    component: rbac
+    role-type: reader
+  annotations:
+    description: "Просмотр всех нересурсных объектов кластера: Pods, Deployments, Services и т.д. Без доступа к Secrets и RBAC."
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "persistentvolumes", "namespaces", "nodes", "events"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses", "networkpolicies"]
+  verbs: ["get", "list", "watch"]
+
+---
+# ===============================
+# ClusterRole: namespace-developer
+# Управление прикладными ресурсами в namespace (без Secrets и RBAC)
+# ===============================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: namespace-developer
+  labels:
+    app: propdevelopment
+    component: rbac
+    role-type: developer
+  annotations:
+    description: "Полный доступ к прикладным ресурсам (Pods, Deployments, Services) в рамках выделенных namespace. Без доступа к Secrets и RBAC."
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "persistentvolumeclaims", "events"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "statefulsets", "daemonsets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+# ===============================
+# ClusterRole: cluster-admin-custom
+# Полный административный доступ (аналог встроенного cluster-admin, но с описанием)
+# ===============================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-admin-custom
+  labels:
+    app: propdevelopment
+    component: rbac
+    role-type: admin
+  annotations:
+    description: "Полный административный доступ ко всем ресурсам кластера, включая узлы, хранилища, сеть и RBAC. Только для Platform/SRE команды."
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+
+---
+# ===============================
+# ClusterRole: secrets-reader
+# Только просмотр секретов (привязка к namespace через RoleBinding!)
+# ===============================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: secrets-reader
+  labels:
+    app: propdevelopment
+    component: rbac
+    role-type: security
+  annotations:
+    description: "Просмотр секретов в определённых namespace (например, finance, security). Не предоставляет доступ к другим ресурсам без дополнительных ролей."
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]

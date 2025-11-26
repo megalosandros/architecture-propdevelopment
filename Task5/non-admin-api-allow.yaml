@@ -1,0 +1,67 @@
+# Настройте сетевые политики так, чтобы разделить трафик между 
+# сервисами API (admin-back-end-api, back-end-api) и сервисами, которые 
+# используют их UI (front-end, admin-front-end).
+# Таким образом, сетевые политики должны разрешить сетевой трафик в обе 
+# стороны между парой сервисов front-end и back-end-api, а также admin-front-end и admin-back-end-api.
+
+# Разрешить front-end-app → back-end-api-app (и обратно, если нужно исходящий трафик)
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app-role: back-end-api
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app-role: front-end
+    ports:
+    - protocol: TCP
+      port: 80
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app-role: front-end
+    ports:
+    - protocol: TCP
+      port: 80
+
+---
+# Разрешить admin-front-end-app → admin-back-end-api-app (и обратно)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-admin-frontend-to-admin-backend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app-role: admin-back-end-api
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app-role: admin-front-end
+    ports:
+    - protocol: TCP
+      port: 80
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app-role: admin-front-end
+    ports:
+    - protocol: TCP
+      port: 80

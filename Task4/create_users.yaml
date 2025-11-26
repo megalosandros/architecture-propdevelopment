@@ -1,0 +1,58 @@
+# Создание пользователей
+# Namespace (при необходимости создать отдельно)
+# kubectl create namespace propdevelopment
+
+---
+# ServiceAccount для специалиста по информационной безопасности
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: security-admin-sa
+  namespace: propdevelopment
+  labels:
+    app: propdevelopment
+    component: rbac
+    user-type: security
+  annotations:
+    description: "ServiceAccount для специалиста по информационной безопасности. Используется для аудита, просмотра секретов и анализа инцидентов в соответствии с политиками ИБ."
+---
+# ServiceAccount для DevOps-инженера / разработчика
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: devops-developer-sa
+  namespace: propdevelopment
+  labels:
+    app: propdevelopment
+    component: rbac
+    user-type: developer
+  annotations:
+    description: "ServiceAccount для DevOps-инженера или разработчика. Предоставляет права на управление ресурсами (Pods, Deployments, Services) в выделенных namespace, без доступа к секретам и RBAC."
+---
+# ServiceAccount для Platform/SRE-администратора
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: platform-admin-sa
+  namespace: propdevelopment
+  labels:
+    app: propdevelopment
+    component: rbac
+    user-type: admin
+  annotations:
+    description: "ServiceAccount для Platform-команды или SRE. Обеспечивает полный административный доступ ко всему кластеру, включая управление узлами, сетью, storage и RBAC."
+---
+# ServiceAccount для бизнес-аналитика или менеджера
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: business-reader-sa
+  namespace: propdevelopment
+  labels:
+    app: propdevelopment
+  labels:
+    app: propdevelopment
+    component: rbac
+    user-type: reader
+  annotations:
+    description: "ServiceAccount для бизнес-аналитиков и менеджеров. Позволяет просматривать состояние ресурсов (Pods, Deployments, Services) в режиме только для чтения, без доступа к секретам и конфигурации безопасности."
